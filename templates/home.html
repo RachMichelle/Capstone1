@@ -1,7 +1,18 @@
 {% extends 'base.html' %}
 
-{% block title %}Inpire-Me{% endblock %}
+{% block title %}Inspire-Me{% endblock %}
 
 {% block content %}
-<h1 class="display-1 ms-3">Test</h1>
+<div class="container text-center mt-5">
+    <h1 class="display-1">Explore</h1>
+    <div class="row justify-content-evenly mt-5">
+        <div class="col mt-5">
+            <a role="button" class="btn btn-outline-primary btn-lg btn-block" href="/search/MET" style="width:100%;">The Metropolitan Museum of Art</a>
+        </div>
+        <div class="col mt-5">
+            <a role="button" class="btn btn-outline-primary btn-lg btn-block" href="/search/AIC" style="width:100%;">The Art Institute of Chicago</a>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

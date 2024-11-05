@@ -9,8 +9,60 @@
 </head>
 
 <body>
+    <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Inspire-Me</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
+                aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarColor01">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+                            aria-haspopup="true" aria-expanded="false">Explore</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="/search/MET">The Met</a>
+                            <a class="dropdown-item" href="/search/AIC">Art Institute of Chicago</a>
+                        </div>
+                    </li>
+                    {% if g.user %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/inspo/{{g.user.id}}">My Inspo</a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    {% if not g.user %}
+                    <li class="nav-item">
+                        <small><a class="nav-link" href="/login">Log In</a></small>
+                    </li>
+                    <li class="nav-item">
+                        <small><a class="nav-link" href="/register">Register</a></small>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <small><span class="navbar-text">{{g.user.username}} (<a href="/logout">Log
+                                    Out</a>)</span></small>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    {% for category, message in get_flashed_messages(with_categories=True) %}
+    <div class="alert alert-{{ category }}">
+        {{ message }}
+    </div>
+    {% endfor %}
+
     {% block content %}
     {% endblock %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 </body>
 
 </html>

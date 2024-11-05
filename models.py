@@ -39,7 +39,7 @@ class User(db.Model):
         return cls(username=username, email=email, password=hashed_pwd)
     
     @classmethod
-    def authenticate_user(username, password):
+    def authenticate_user(cls, username, password):
         """check for existing user; if found-confirm correct pwd & return User. If not found or incorrect pwd-return False"""
         
         user = User.query.filter_by(username=username).first()
