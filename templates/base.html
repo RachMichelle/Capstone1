@@ -22,8 +22,8 @@
                         <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
                             aria-haspopup="true" aria-expanded="false">Explore</a>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="/search/MET">The Met</a>
-                            <a class="dropdown-item" href="/search/AIC">Art Institute of Chicago</a>
+                            <a class="dropdown-item" href="/search/met">The Met</a>
+                            <a class="dropdown-item" href="/search/aic">Art Institute of Chicago</a>
                         </div>
                     </li>
                     {% if g.user %}
@@ -56,7 +56,7 @@
         {{ message }}
     </div>
     {% endfor %}
-
+    
     {% block content %}
     {% endblock %}
 

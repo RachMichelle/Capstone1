@@ -1,6 +1,9 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, EmailField, PasswordField
-from wtforms.validators import InputRequired, Length, Email, EqualTo
+from wtforms import StringField, EmailField, PasswordField, TextAreaField
+from wtforms.validators import InputRequired, Length, Email, EqualTo, Optional
+
+# User Forms ***************************************************************
+
 
 class RegisterForm(FlaskForm):
     """Registration form for new users--username, email, password & confirm password"""
@@ -29,3 +32,11 @@ class LoginForm(FlaskForm):
     
     password=PasswordField("Password", validators=
                            [InputRequired(message="Required")])
+    
+    # Inspo Forms ************************************************************
+
+    class InspoForm(FlaskForm):
+        """Add or Edit inspo -- Only notes can be input by user. All other info is pulled from Result object"""
+
+        notes=TextAreaField("Notes", validators=
+                            [Optional()])

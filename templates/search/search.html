@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Search{% endblock %}
+
+{% block content %}
+
+<h1 class="display-5 my-5 ms-3">{{museum}}</h1>
+
+<div class="container mt-5 pt-5">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-6">
+            <form class="mt-5 pt-5">
+                <h3>Search</h3>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" aria-label="Search" aria-describedby="button-addon2">
+                    <button class="btn btn-primary" type="button" id="button-addon2">GO</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

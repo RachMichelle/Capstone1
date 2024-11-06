@@ -3,8 +3,9 @@ from dotenv import load_dotenv
 
 from flask import Flask, render_template, redirect, session, flash, g
 from flask_debugtoolbar import DebugToolbarExtension
-from models import db, connect_db, User
+from models import db, connect_db, User, Inspo
 from forms import LoginForm, RegisterForm
+from result import Result
 
 from sqlalchemy.exc import IntegrityError
 
@@ -51,10 +52,10 @@ def confirm_access(user_id):
     """confirm access for page--check for logged in user and check that logged in user id matches user id for page"""
 
     if not g.user:
-        flash('Please log in or register to use this feature!', 'danger')
+        flash('Please log in or register to use that feature!', 'info')
         return False
     if g.user.id != user_id:
-        flash('You are not authorized to view this page', 'danger')
+        flash('You are not authorized to view that page', 'danger')
         return False
 
     return True
@@ -140,7 +141,7 @@ def logout_user():
 # inspo management. Full list, single with details
 # only accessable to logged-in users
 
-@app.route('/inspo/<user_id>')
+@app.route('/inspo/<int:user_id>')
 def get_inspo_list(user_id):
     """get list of saved inspo for logged-in user"""
 
@@ -149,6 +150,41 @@ def get_inspo_list(user_id):
     if not confirm_access(user.id):
         return redirect('/')
 
-    return render_template('inspo-list.html')
-    
-   
+    return render_template('inspos/inspo-list.html')
+
+@app.route('/inspo/<int:user_id>/add')
+def add_inspo(user_id):
+    """add new inspo for logged in user"""
+
+    if not confirm_access(user_id):
+        return redirect('/')
+
+    return render_template('/forms/inspo-edit.html')
+
+@app.route('/inspo/<int:inspo_id>/edit')
+def edit_inspo(inspo_id):
+    """edit existing inspo for logged in user"""
+    inspo = Inspo.query.get_or_404(inspo_id)
+    # need to set up db relationship for this:
+    if not confirm_access(inspo.user.id):
+        return redirect('/')
+
+    return render_template('/forms/inspo-edit.html')
+
+# *********************************************************************************
+# Search Routes 
+# in future, will condense to one route with variable for museum id. For now, setting museum variable to name to pass to single tempalte
+
+@app.route('/search/met')
+def show_search_met():
+    """search form for the Met"""
+    museum="The Metropolitan Museum of Art"
+    return render_template('search/search.html', museum=museum)
+
+
+@app.route('/search/aic')
+def show_search_aic():
+    """search form for the aic"""
+    museum="The Art Institute of Chicago"
+    return render_template('search/search.html', museum=museum)
+

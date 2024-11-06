@@ -12,6 +12,22 @@ def connect_db(app):
     db.app = app
     db.init_app(app)
 
+# *****TO IMPLEMENT LATER*****
+# store museums and their endpoints in db and dynamically populate search pages. Allows exploration expansion. 
+
+# class Museum(db.Model):
+#     """table of museums available to explore"""
+
+#     __tablename__ = 'museums'
+
+#     id - db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+#     name = db.Column(db.text, nullable=False, unique=True)
+
+#     location = db.Column(db.Text)
+
+#     seach_endpoint = db.Column(db.text, nullable=False)
+
 class User(db.Model):
     """User"""
 
@@ -48,3 +64,18 @@ class User(db.Model):
             return user
         else:
             return False
+        
+class Inspo(db.Model):
+    """saved pieces for users"""
+
+    __tablename__ = "inspos"
+
+    id = db.Column(db.Integer, primary_key=True)
+    
+    # Save serialized Result object as source
+    source = db.Column(db.PickleType, nullable=False)
+
+    notes = db.Column(db.Text)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+

@@ -1,0 +1,3 @@
+name, location, search_endpoint
+"The Metropolitan Museum of Art", "New York, NY", "https://collectionapi.metmuseum.org/public/collection/v1/search?q="
+"Art Institute of Chicago", "Chicago, IL", "https://api.artic.edu/api/v1/artworks/search?q="
