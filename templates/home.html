@@ -6,11 +6,23 @@
 <div class="container text-center mt-5">
     <h1 class="display-1">Explore</h1>
     <div class="row justify-content-evenly mt-5">
-        <div class="col mt-5">
-            <a role="button" class="btn btn-outline-primary btn-lg btn-block" href="/search/met" style="width:100%;">The Metropolitan Museum of Art</a>
+        <div class="col-6 mt-5">
+            <a role="button" class="btn btn-outline-primary btn-lg btn-block" href="{{url_for('show_search_met')}}"
+                style="width:100%;">Metropolitan Museum of Art</a>
         </div>
-        <div class="col mt-5">
-            <a role="button" class="btn btn-outline-primary btn-lg btn-block" href="/search/aic" style="width:100%;">The Art Institute of Chicago</a>
+        <div class="row justify-content-evenly mt-5">
+            <h5> Coming Soon</h5>
+            <!-- inactive -->
+            <div class="row justify-content-evenly">
+                <div class="col-6">
+                    <a role="button" class="btn btn-outline-primary btn-lg btn-block disabled" href="#"
+                        style="width:100%;">The Art Institute of Chicago</a>
+                </div>
+                <div class="col-6">
+                    <a role="button" class="btn btn-outline-primary btn-lg btn-block disabled" href="#"
+                        style="width:100%;">Rijksmuseum</a>
+                </div>
+            </div>
         </div>
     </div>
 </div>

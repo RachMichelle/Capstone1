@@ -1,0 +1,17 @@
+{{form.hidden_tag()}}
+
+{% for field in form
+if field.widget.input_type != 'hidden' %}
+
+{{field.label (class_='form-label')}}
+{{field (class_='form-control')}}
+
+{% for error in field.errors %}
+<small class="text-danger">{{error}}</small>
+{% endfor %}
+
+{% endfor %}
+
+<div class="mt-3 text-center">
+    <button class="btn btn-info">Submit</button>
+</div>

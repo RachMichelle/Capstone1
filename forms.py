@@ -35,8 +35,14 @@ class LoginForm(FlaskForm):
     
     # Inspo Forms ************************************************************
 
-    class InspoForm(FlaskForm):
-        """Add or Edit inspo -- Only notes can be input by user. All other info is pulled from Result object"""
+class InspoForm(FlaskForm):
+    """Add or Edit inspo -- Only notes can be input by user. All other info is pulledfrom Result object."""
 
-        notes=TextAreaField("Notes", validators=
-                            [Optional()])
+    notes=TextAreaField("Notes", validators=
+                        [Optional()])
+        
+class NoteForm(FlaskForm):
+    """Add or Edit stand-alone note. Note field is not optional with no source. Saves as inspo instance"""
+        
+    notes=TextAreaField("Notes", validators=
+                        [InputRequired()])

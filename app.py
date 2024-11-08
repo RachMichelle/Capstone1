@@ -1,11 +1,13 @@
 import os
 from dotenv import load_dotenv
 
-from flask import Flask, render_template, redirect, session, flash, g
+from flask import Flask, render_template, redirect, session, flash, g, url_for, request
 from flask_debugtoolbar import DebugToolbarExtension
 from models import db, connect_db, User, Inspo
-from forms import LoginForm, RegisterForm
-from result import Result
+from forms import LoginForm, RegisterForm, NoteForm, InspoForm
+# from result import Result
+from helpers import login, logout, confirm_access
+
 
 from sqlalchemy.exc import IntegrityError
 
@@ -36,35 +38,11 @@ def add_user_to_g():
     else:
         g.user = None
 
-
-def login(user):
-    """add successfully authenticated user to session"""
-
-    session[CURR_USER_KEY] = user.id
-
-def logout():
-    """remove user from session"""
-
-    if CURR_USER_KEY in session:
-        session.pop(CURR_USER_KEY)
-
-def confirm_access(user_id):
-    """confirm access for page--check for logged in user and check that logged in user id matches user id for page"""
-
-    if not g.user:
-        flash('Please log in or register to use that feature!', 'info')
-        return False
-    if g.user.id != user_id:
-        flash('You are not authorized to view that page', 'danger')
-        return False
-
-    return True
-
 # *********************************************************************************
 
 @app.errorhandler(404)
 def page_not_found(e):
-    """custom 404 page"""
+    """404 page"""
     return render_template('404.html'), 404
 
 # *********************************************************************************
@@ -82,13 +60,13 @@ def login_user():
     """show login page and handle login form submission"""
 
     if CURR_USER_KEY in session: 
-        flash("You're already logged in!", "info alert-dismissable")
+        flash("You're already logged in!", "info")
         return redirect('/')
 
     form = LoginForm()
 
     if form.validate_on_submit():
-        user = User.authenticate_user(form.username.data, form.password.data)
+        user = User.authenticate_user(form.username.data.lower(), form.password.data)
 
         if user:
             login(user)
@@ -110,22 +88,27 @@ def register_user():
     form = RegisterForm()
 
     if form.validate_on_submit():
-        try:
-            new_user=User.register_user(
-                username=form.username.data, 
-                email=form.email.data,
-                password=form.password.data,
-            )
-            db.session.add(new_user)
-            db.session.commit()
-        except IntegrityError:
-            db.session.rollback()
-            flash('That username is not available--please try another', 'warning') 
+        # check to see if email is already in system
+        if User.query.filter_by(email=form.email.data).first():
+            flash('There is already an account registered with that email', 'warning')
             return render_template('forms/register.html', form=form)
+        else:    
+            try:
+                new_user=User.register_user(
+                    username=form.username.data.lower(), 
+                    email=form.email.data,
+                    password=form.password.data,
+                )
+                db.session.add(new_user)
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
+                flash('That username is not available--please try another', 'warning') 
+                return render_template('forms/register.html', form=form)
         
-        login(new_user)
-        flash('Account Created!', 'success')
-        return redirect('/')
+            login(new_user)
+            flash('Account Created!', 'success')
+            return redirect('/')
 
     return render_template('forms/register.html', form=form)
 
@@ -138,53 +121,76 @@ def logout_user():
     return redirect('/')
 
 # *********************************************************************************
-# inspo management. Full list, single with details
+# inspo management
 # only accessable to logged-in users
 
-@app.route('/inspo/<int:user_id>')
+@app.route('/inspo/<int:user_id>', methods = ['GET', 'POST'])
 def get_inspo_list(user_id):
-    """get list of saved inspo for logged-in user"""
+    """get list of saved inspo for logged-in user. forms for add/edit stand alone notes"""
 
-    user=User.query.get_or_404(user_id)
+    user = User.query.get_or_404(user_id)
  
     if not confirm_access(user.id):
         return redirect('/')
+    
+    # to edit note
+    if request.form.get('inspo_id'):
+        
+        inspo_id=request.form.get('inspo_id')
+        note = Inspo.query.get_or_404(inspo_id)
 
-    return render_template('inspos/inspo-list.html')
+        form = NoteForm(obj=note)
+        
+        if form.validate_on_submit():
+            note.notes=form.notes.data
 
-@app.route('/inspo/<int:user_id>/add')
-def add_inspo(user_id):
-    """add new inspo for logged in user"""
+            db.session.commit()
+             
+            flash('Updated!', 'success')
+            return redirect(url_for('get_inspo_list', user_id=user.id))
 
-    if not confirm_access(user_id):
-        return redirect('/')
+    # to add new note
+    else: 
+        form = NoteForm()
+    
+        if form.validate_on_submit():
+            notes=form.notes.data
 
-    return render_template('/forms/inspo-edit.html')
+            new_note=Inspo.make_inspo(source=None, notes=notes, user_id=g.user.id)
 
-@app.route('/inspo/<int:inspo_id>/edit')
-def edit_inspo(inspo_id):
-    """edit existing inspo for logged in user"""
-    inspo = Inspo.query.get_or_404(inspo_id)
-    # need to set up db relationship for this:
+            db.session.add(new_note)
+            db.session.commit()
+
+            # clear form field--data was persisting after submission
+            form.notes.data=''
+        
+            flash('Note Added!', 'success')
+            return redirect(url_for('get_inspo_list', user_id=user.id))
+
+    return render_template('inspos/inspo-list.html', user=user, form=form)
+
+@app.route('/inspo/<int:inspo_id>/delete')
+def delete_inspo(inspo_id):
+    """delete favorite or note"""
+
+    inspo=Inspo.query.get_or_404(inspo_id)
+
     if not confirm_access(inspo.user.id):
         return redirect('/')
 
-    return render_template('/forms/inspo-edit.html')
+    db.session.delete(inspo)
+    db.session.commit()
+
+    flash('Deleted', 'primary')
+    return redirect(url_for('get_inspo_list', user_id=g.user.id))
+
 
 # *********************************************************************************
 # Search Routes 
-# in future, will condense to one route with variable for museum id. For now, setting museum variable to name to pass to single tempalte
+# Will bed reworked to support multiple museums in future
 
 @app.route('/search/met')
 def show_search_met():
     """search form for the Met"""
     museum="The Metropolitan Museum of Art"
     return render_template('search/search.html', museum=museum)
-
-
-@app.route('/search/aic')
-def show_search_aic():
-    """search form for the aic"""
-    museum="The Art Institute of Chicago"
-    return render_template('search/search.html', museum=museum)
-

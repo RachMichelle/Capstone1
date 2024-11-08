@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/lux/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 </head>
 
 <body>
@@ -22,28 +23,31 @@
                         <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
                             aria-haspopup="true" aria-expanded="false">Explore</a>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="/search/met">The Met</a>
-                            <a class="dropdown-item" href="/search/aic">Art Institute of Chicago</a>
+                            <a class="dropdown-item" href="{{url_for('show_search_met')}}">The Met</a>
+                            <div class="dropdown-divider"></div>
+                            <!-- inactive -->
+                            <a class="dropdown-item disabled" href="#" aria-disabled="true">Art Institute of
+                                Chicago</a>
+                            <a class="dropdown-item disabled" href="#" aria-disabled="true">Rijksmuseum</a>
                         </div>
                     </li>
                     {% if g.user %}
                     <li class="nav-item">
-                        <a class="nav-link" href="/inspo/{{g.user.id}}">My Inspo</a>
+                        <a class="nav-link" href="{{url_for('get_inspo_list', user_id=g.user.id)}}">My Inspo</a>
                     </li>
                     {% endif %}
                 </ul>
                 <ul class="navbar-nav ms-auto">
                     {% if not g.user %}
                     <li class="nav-item">
-                        <small><a class="nav-link" href="/login">Log In</a></small>
+                        <small><a class="nav-link" href="{{url_for('login_user')}}">Log In</a></small>
                     </li>
                     <li class="nav-item">
-                        <small><a class="nav-link" href="/register">Register</a></small>
+                        <small><a class="nav-link" href="{{url_for('register_user')}}">Register</a></small>
                     </li>
                     {% else %}
                     <li class="nav-item">
-                        <small><span class="navbar-text">{{g.user.username}} (<a href="/logout">Log
-                                    Out</a>)</span></small>
+                        <small><span class="navbar-text">{{g.user.username}} (<a href="{{url_for('logout_user')}}">Log Out</a>)</span></small>
                     </li>
                     {% endif %}
                 </ul>
@@ -56,7 +60,7 @@
         {{ message }}
     </div>
     {% endfor %}
-    
+
     {% block content %}
     {% endblock %}
 

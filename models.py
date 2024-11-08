@@ -47,12 +47,14 @@ class User(db.Model):
     
     @classmethod
     def register_user(cls, username, email, password):
-        """hash pwd & create new User instance"""
+        """make username lowercased, hash pwd & create new User instance"""
+
+        lowercased_username=username.lower()
 
         hash=bcrypt.generate_password_hash(password)
         hashed_pwd=hash.decode('utf8')
 
-        return cls(username=username, email=email, password=hashed_pwd)
+        return cls(username=lowercased_username, email=email, password=hashed_pwd)
     
     @classmethod
     def authenticate_user(cls, username, password):
@@ -72,10 +74,17 @@ class Inspo(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     
-    # Save serialized Result object as source
-    source = db.Column(db.PickleType, nullable=False)
+    # Save serialized Result object as source. Optional: Users can save stand alone notes for ideas without being attached to search result
+    source = db.Column(db.PickleType)
 
     notes = db.Column(db.Text)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
+    user = db.relationship('User', backref='inspos')
+
+    @classmethod
+    def make_inspo(cls, source, notes, user_id):
+        """create new inspo instance"""
+
+        return cls(source=source, notes=notes, user_id=user_id)
