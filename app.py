@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 
 from flask import Flask, render_template, redirect, session, flash, g, url_for, request
-from flask_debugtoolbar import DebugToolbarExtension
+# from flask_debugtoolbar import DebugToolbarExtension
 from models import db, connect_db, User, Inspo
 from forms import LoginForm, RegisterForm, NoteForm, InspoForm
 # from result import Result
@@ -24,7 +24,7 @@ app.config['SQLALCHEMY_ECHO'] = False
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "secret")
 
-toolbar = DebugToolbarExtension(app)
+# toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
 
@@ -124,7 +124,7 @@ def logout_user():
 # inspo management
 # only accessable to logged-in users
 
-@app.route('/inspo/<int:user_id>', methods = ['GET', 'POST'])
+@app.route('/inspo/<int:user_id>', methods = ['GET', 'POST', 'PATCH'])
 def get_inspo_list(user_id):
     """get list of saved inspo for logged-in user. forms for add/edit stand alone notes"""
 
@@ -132,14 +132,14 @@ def get_inspo_list(user_id):
  
     if not confirm_access(user.id):
         return redirect('/')
-    
+
+    form = NoteForm()
+
     # to edit note
     if request.form.get('inspo_id'):
         
-        inspo_id=request.form.get('inspo_id')
-        note = Inspo.query.get_or_404(inspo_id)
-
-        form = NoteForm(obj=note)
+        id=request.form.get('inspo_id')
+        note = Inspo.query.get_or_404(id)
         
         if form.validate_on_submit():
             note.notes=form.notes.data
@@ -151,7 +151,6 @@ def get_inspo_list(user_id):
 
     # to add new note
     else: 
-        form = NoteForm()
     
         if form.validate_on_submit():
             notes=form.notes.data
@@ -167,7 +166,7 @@ def get_inspo_list(user_id):
             flash('Note Added!', 'success')
             return redirect(url_for('get_inspo_list', user_id=user.id))
 
-    return render_template('inspos/inspo-list.html', user=user, form=form)
+    return render_template('inspo-list.html', user=user, form=form)
 
 @app.route('/inspo/<int:inspo_id>/delete')
 def delete_inspo(inspo_id):

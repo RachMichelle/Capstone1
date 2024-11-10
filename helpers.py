@@ -2,6 +2,8 @@ from flask import session, flash, g
 
 CURR_USER_KEY = "curr_user"
 
+# user route functions
+
 def login(user):
     """add successfully authenticated user to session"""
 
@@ -25,4 +27,14 @@ def confirm_access(user_id):
 
     return True
 
+# search results
 
+class Result():
+    """build result object from API response"""
+
+    def __init__(self, name, artist, image, medium):
+        
+        self.name = name 
+        self.artist = artist
+        self.image = image
+        self.medium = medium

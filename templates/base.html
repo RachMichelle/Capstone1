@@ -10,6 +10,7 @@
 </head>
 
 <body>
+    <!-- navbar -->
     <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">Inspire-Me</a>
@@ -47,7 +48,8 @@
                     </li>
                     {% else %}
                     <li class="nav-item">
-                        <small><span class="navbar-text">{{g.user.username}} (<a href="{{url_for('logout_user')}}">Log Out</a>)</span></small>
+                        <small><span class="navbar-text">{{g.user.username}} (<a href="{{url_for('logout_user')}}">Log
+                                    Out</a>)</span></small>
                     </li>
                     {% endif %}
                 </ul>
@@ -55,6 +57,7 @@
         </div>
     </nav>
 
+    <!-- flashed messages -->
     {% for category, message in get_flashed_messages(with_categories=True) %}
     <div class="alert alert-{{ category }}">
         {{ message }}
@@ -64,9 +67,17 @@
     {% block content %}
     {% endblock %}
 
+    <!-- scripts -->
+    <!-- bootstrap bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
+    <!-- jquery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <!-- static js file -->
+    <script src="/static/script.js"></script>
+
 </body>
 
 </html>

@@ -1,8 +1,11 @@
 {% extends 'base.html' %}
 
-{% block title %}Inspo{% endblock %}
+{% block title %}&#x1F4A1;{% endblock %}
 
 {% block content %}
+
+<!-- add note button -->
+
 <div class="container">
     <div class="row my-3">
         <div class="col">
@@ -12,6 +15,7 @@
     </div>
 
     <!-- Add note form modal  -->
+
     <div class="modal" id="add-note-modal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -33,17 +37,20 @@
 
     {% for inspo in user.inspos %}
     <div class="card mb-2">
-        <div class="card-body">
+        <div class="card-body note-{{inspo.id}}">
             {{inspo.notes}}
         </div>
         <div class="card-footer">
             <button class="btn btn-sm btn-outline-danger float-end" data-bs-toggle="modal"
                 data-bs-target="#confirm-delete-modal-{{inspo.id}}"><i class="fa-regular fa-trash-can"></i></button>
-            <button class="btn btn-sm btn-outline-secondary float-end" data-bs-toggle="modal"
-                data-bs-target="#edit-note-modal-{{inspo.id}}"><i class="fa-solid fa-pen-to-square"></i></button>
+            <button class="btn btn-sm btn-outline-secondary float-end edit-button" data-bs-toggle="modal"
+                data-bs-target="#edit-note-modal-{{inspo.id}}" data-inspo-id="{{inspo.id}}"><i
+                    class="fa-solid fa-pen-to-square"></i></button>
         </div>
     </div>
+
     <!-- confirm delete modal -->
+
     <div class="modal" id="confirm-delete-modal-{{inspo.id}}" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -55,12 +62,15 @@
                 </div>
                 <div class="modal-footer">
                     <a type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</a>
-                    <a type="button" class="btn btn-outline-danger" href="{{url_for('delete_inspo', inspo_id=inspo.id)}}">Delete</a>
+                    <a type="button" class="btn btn-outline-danger"
+                        href="{{url_for('delete_inspo', inspo_id=inspo.id)}}">Delete</a>
                 </div>
             </div>
         </div>
     </div>
+
     <!-- Edit note form modal -->
+
     <div class="modal" id="edit-note-modal-{{inspo.id}}" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -69,7 +79,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="POST">
+                    <form method="POST" class="edit-form-{{inspo.id}}">
                         <input type="hidden" id="inspo_id" name="inspo_id" value="{{inspo.id}}">
                         {% include 'forms/note.html' %}
                     </form>
@@ -78,7 +88,6 @@
         </div>
     </div>
     {% endfor %}
-
 </div>
 
 {% endblock %}

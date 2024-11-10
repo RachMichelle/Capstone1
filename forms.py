@@ -42,7 +42,10 @@ class InspoForm(FlaskForm):
                         [Optional()])
         
 class NoteForm(FlaskForm):
-    """Add or Edit stand-alone note. Note field is not optional with no source. Saves as inspo instance"""
+    """Add stand-alone note. Note field is not optional with no source. Saves as inspo instance"""
         
     notes=TextAreaField("Notes", validators=
                         [InputRequired()])
+    
+# class EditNoteForm(FlaskForm):
+#     """Edtit stand-alone note. Note field required, includes id as hidden field"""
