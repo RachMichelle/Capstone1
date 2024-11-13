@@ -2,11 +2,11 @@ import os
 from dotenv import load_dotenv
 
 from flask import Flask, render_template, redirect, session, flash, g, url_for, request
+from random import choice
 # from flask_debugtoolbar import DebugToolbarExtension
 from models import db, connect_db, User, Inspo
 from forms import LoginForm, RegisterForm, NoteForm, InspoForm
-# from result import Result
-from helpers import login, logout, confirm_access
+from helpers import login, logout, confirm_access, get_met_results, get_met_object
 
 
 from sqlalchemy.exc import IntegrityError
@@ -89,14 +89,14 @@ def register_user():
 
     if form.validate_on_submit():
         # check to see if email is already in system
-        if User.query.filter_by(email=form.email.data).first():
+        if User.query.filter_by(email=form.email.data.lower()).first():
             flash('There is already an account registered with that email', 'warning')
             return render_template('forms/register.html', form=form)
         else:    
             try:
                 new_user=User.register_user(
                     username=form.username.data.lower(), 
-                    email=form.email.data,
+                    email=form.email.data.lower(),
                     password=form.password.data,
                 )
                 db.session.add(new_user)
@@ -124,7 +124,7 @@ def logout_user():
 # inspo management
 # only accessable to logged-in users
 
-@app.route('/inspo/<int:user_id>', methods = ['GET', 'POST', 'PATCH'])
+@app.route('/inspo/<int:user_id>', methods = ['GET', 'POST'])
 def get_inspo_list(user_id):
     """get list of saved inspo for logged-in user. forms for add/edit stand alone notes"""
 
@@ -155,12 +155,12 @@ def get_inspo_list(user_id):
         if form.validate_on_submit():
             notes=form.notes.data
 
-            new_note=Inspo.make_inspo(source=None, notes=notes, user_id=g.user.id)
+            new_note=Inspo.make_inspo(notes=notes, user_id=g.user.id)
 
             db.session.add(new_note)
             db.session.commit()
 
-            # clear form field--data was persisting after submission
+            # clear form field after submission
             form.notes.data=''
         
             flash('Note Added!', 'success')
@@ -193,3 +193,21 @@ def show_search_met():
     """search form for the Met"""
     museum="The Metropolitan Museum of Art"
     return render_template('search/search.html', museum=museum)
+
+@app.route('/search/results')
+def show_search_results():
+    """show search results for given term"""
+
+    search_term  = request.args.get('q')
+
+    # get list of object IDs
+    obj_ids = get_met_results(search_term)
+
+    if not obj_ids: 
+        return render_template('search/no-results.html', search_term=search_term)
+
+    # get one random result from possible objects
+    obj = choice(obj_ids)
+    result = get_met_object(obj)
+
+    return render_template('/search/results.html', search_term=search_term, result=result)

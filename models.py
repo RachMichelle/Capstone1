@@ -74,17 +74,28 @@ class Inspo(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     
-    # Save serialized Result object as source. Optional: Users can save stand alone notes for ideas without being attached to search result
-    source = db.Column(db.PickleType)
+    # Optional: Users can save stand alone notes for ideas without being attached to search result. For stand alone notes, content validated on form submit
+    notes = db.Column(db.Text, nullable=True)
+    
+    image = db.Column(db.Text, nullable=True)
 
-    notes = db.Column(db.Text)
+    name = db.Column(db.Text, nullable=True)
+
+    artist = db.Column(db.Text, nullable=True)
+
+    medium = db.Column(db.Text, nullable=True)
+
+    dimensions = db.Column(db.Text, nullable=True)
+
+     # not all dates are exact, some give approximations (ex-"19th century") cannot use integer or date format to properly capture data provided
+    creation_date = db.Column(db.Text, nullable=True)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     user = db.relationship('User', backref='inspos')
 
     @classmethod
-    def make_inspo(cls, source, notes, user_id):
-        """create new inspo instance"""
+    def make_inspo(cls, notes, user_id, image=None, name=None, artist=None, medium=None, dimensions=None, creation_date=None ):
+        """create new inspo instance, default None for all art info in case of stand alone note"""
 
-        return cls(source=source, notes=notes, user_id=user_id)
+        return cls(notes=notes, user_id=user_id, image=image, name=name, artist=artist, medium=medium, dimensions=dimensions, creation_date=creation_date)

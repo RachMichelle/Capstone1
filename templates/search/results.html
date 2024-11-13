@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}{{search_term}} - Explore{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-5 ms-3">
+    <h1>"{{search_term}}"</h1>
+    <div class="row mt-3 justify-content-center">
+        <div class="col-6">
+            <div class="container text-center mt-3">
+                {% if result.image %}
+                <img class="img-thumbnail" src="{{result.image}}" style="max-height: 50vh; width: auto;">
+                {% else %}
+                <div class="mt-5 pt-5">
+                    <i class="fa-regular fa-image fa-2xl"></i>
+                    <p>no image available &#9785;</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-6">
+            <ul class="list-group me-3 d-flex justify-content-between">
+                {% if result.name %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <h5 class="mb-1">Title</h5>
+                    <p>"{{result.name}}"</p>
+                </li>
+                {% endif %}
+                {% if result.artist %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <h5 class="mb-1">Artist</h5>
+                    <p>{{result.artist}}</p>
+                </li>
+                {% endif %}
+                {% if result.medium %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <h5 class="mb-1">Medium</h5>
+                    <p>{{result.medium}}</p>
+                </li>
+                {% endif %}
+                {% if result.dimensions %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <h5 class="mb-1">dimensions</h5>
+                    <p>{{result.dimensions}}</p>
+                </li>
+                {% endif %}
+                {% if result.creation_date %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <h5 class="mb-1">Creation Date</h5>
+                    <p>{{result.creation_date}}</p>
+                </li>
+                {% endif %}
+            </ul>
+            <form class="mt-5">
+                <div class="d-flex justify-content-center">
+                    <input type="hidden" name="q" value="{{search_term}}">
+                    <!-- open modal form to create inspo with result -->
+                    <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#save-inspo-modal">
+                        Save
+                    </button>
+                    <button class="btn btn-outline-primary" type="submit">
+                        Try again
+                    </button>
+                    <a class="btn btn-outline-secondary" role="button" href="{{url_for('show_search_met')}}">
+                        Go back
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- save inspo modal -->
+<div class="modal fade" id="save-inspo-modal" tabindex="-1" aria-labelledby="save-inspo-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Save</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>inspo form here</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
