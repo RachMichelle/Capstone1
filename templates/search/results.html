@@ -1,10 +1,9 @@
 {% extends 'base.html' %}
 
-{% block title %}{{search_term}} - Explore{% endblock %}
+{% block title %}Explore{% endblock %}
 
 {% block content %}
 <div class="container-fluid mt-5 ms-3">
-    <h1>"{{search_term}}"</h1>
     <div class="row mt-3 justify-content-center">
         <div class="col-6">
             <div class="container text-center mt-3">
@@ -53,11 +52,14 @@
             </ul>
             <form class="mt-5">
                 <div class="d-flex justify-content-center">
+                    {% if g.user %}
                     <input type="hidden" name="q" value="{{search_term}}">
                     <!-- open modal form to create inspo with result -->
-                    <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#save-inspo-modal">
+                    <button type="button" class="btn btn-outline-success" data-bs-toggle="modal"
+                        data-bs-target="#save-inspo-modal">
                         Save
                     </button>
+                    {% endif %}
                     <button class="btn btn-outline-primary" type="submit">
                         Try again
                     </button>
@@ -79,10 +81,16 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>inspo form here</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-info" data-bs-dismiss="modal">Cancel</button>
+                <form method="POST">
+                    <input type="hidden" name="q" value="{{search_term}}">
+                    <input type="hidden" name="title" value="{{result.name}}">
+                    <input type="hidden" name="artist" value="{{result.artist}}">
+                    <input type="hidden" name="medium" value="{{result.medium}}">
+                    <input type="hidden" name="dimensions" value="{{result.dimensions}}">
+                    <input type="hidden" name="creation_date" value="{{result.creation_date}}">
+                    <input type="hidden" name="image" value="{{result.image}}">
+                    {% include 'forms/note.html' %}
+                </form>
             </div>
         </div>
     </div>

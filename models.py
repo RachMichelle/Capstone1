@@ -73,8 +73,11 @@ class Inspo(db.Model):
     __tablename__ = "inspos"
 
     id = db.Column(db.Integer, primary_key=True)
+
+    # indicates stand alone note if False
+    has_favorite = db.Column(db.Boolean, nullable=False)
     
-    # Optional: Users can save stand alone notes for ideas without being attached to search result. For stand alone notes, content validated on form submit
+    # Optional: Users can save stand alone notes for ideas without being attached to saved favorite. For stand alone notes, content validated on form submit
     notes = db.Column(db.Text, nullable=True)
     
     image = db.Column(db.Text, nullable=True)
@@ -95,7 +98,7 @@ class Inspo(db.Model):
     user = db.relationship('User', backref='inspos')
 
     @classmethod
-    def make_inspo(cls, notes, user_id, image=None, name=None, artist=None, medium=None, dimensions=None, creation_date=None ):
-        """create new inspo instance, default None for all art info in case of stand alone note"""
+    def make_inspo(cls, notes, user_id, has_favorite=False, image=None, name=None, artist=None, medium=None, dimensions=None, creation_date=None ):
+        """create new inspo instance, default None for all art info and has_favorite in case of stand alone note"""
 
-        return cls(notes=notes, user_id=user_id, image=image, name=name, artist=artist, medium=medium, dimensions=dimensions, creation_date=creation_date)
+        return cls(notes=notes, user_id=user_id, has_favorite=has_favorite, image=image, name=name, artist=artist, medium=medium, dimensions=dimensions, creation_date=creation_date)

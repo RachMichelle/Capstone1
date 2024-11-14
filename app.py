@@ -194,7 +194,7 @@ def show_search_met():
     museum="The Metropolitan Museum of Art"
     return render_template('search/search.html', museum=museum)
 
-@app.route('/search/results')
+@app.route('/search/results', methods=['GET', 'POST'])
 def show_search_results():
     """show search results for given term"""
 
@@ -210,4 +210,27 @@ def show_search_results():
     obj = choice(obj_ids)
     result = get_met_object(obj)
 
-    return render_template('/search/results.html', search_term=search_term, result=result)
+    form=InspoForm()
+
+    # save result as new inspo
+    if form.validate_on_submit():
+
+        image=request.form.get('image')
+        name=request.form.get('name')
+        artist=request.form.get('artist')
+        medium=request.form.get('medium')
+        dimensions=request.form.get('dimensions')
+        creation_date=request.form.get('creation_date')
+                         
+        notes=form.notes.data
+
+        saved_inspo=Inspo.make_inspo(has_favorite=True, image=image, name=name, artist=artist, medium=medium, dimensions=dimensions, creation_date=creation_date, notes=notes, user_id=g.user.id)
+
+        db.session.add(saved_inspo)
+        db.session.commit()
+
+        flash('Saved!', 'success')
+        return redirect(url_for('show_search_results', result=result, form=form))
+
+
+    return render_template('/search/results.html', search_term=search_term, result=result, form=form)

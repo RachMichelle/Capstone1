@@ -33,9 +33,10 @@
     </div>
 
     <!-- user inspo list -->
-    <!-- fix this, include w/ source -->
 
     {% for inspo in user.inspos %}
+    <!-- stand alone note -->
+    {% if not inspo.has_favorite %}
     <div class="card mb-2">
         <div class="card-body note-{{inspo.id}}">
             {{inspo.notes}}
@@ -48,6 +49,112 @@
                     class="fa-solid fa-pen-to-square"></i></button>
         </div>
     </div>
+    <!-- with saved favorite -->
+    {% else %}
+    <div class="accordion border border-secondary mb-2" id="accordion-{{inspo.id}}">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne-{{inspo.id}}">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseOne-{{inspo.id}}" aria-expanded="false" aria-controls="collapseOne">
+                    Image
+                </button>
+            </h2>
+            <div id="collapseOne-{{inspo.id}}" class="accordion-collapse collapse" aria-labelledby="headingOne"
+                data-bs-parent="#accordion-{{inspo.id}}">
+                <div class="accordion-body d-flex justify-content-center">
+                    <img src="{{inspo.image}}" alt="image for {{inspo.name}}" style="max-height: 200px; width: auto;">
+                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#expand-image-modal-{{inspo.id}}"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingTwo">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseTwo-{{inspo.id}}" aria-expanded="false" aria-controls="collapseTwo">
+                    Details
+                </button>
+            </h2>
+            <div id="collapseTwo-{{inspo.id}}" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+                data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <ul class="list-group me-3 d-flex justify-content-between">
+                        {% if inspo.name %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <h5 class="mb-1">Title</h5>
+                            <p>"{{inspo.name}}"</p>
+                        </li>
+                        {% endif %}
+                        {% if inspo.artist %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <h5 class="mb-1">Artist</h5>
+                            <p>{{inspo.artist}}</p>
+                        </li>
+                        {% endif %}
+                        {% if inspo.medium %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <h5 class="mb-1">Medium</h5>
+                            <p>{{inspo.medium}}</p>
+                        </li>
+                        {% endif %}
+                        {% if inspo.dimensions %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <h5 class="mb-1">dimensions</h5>
+                            <p>{{inspo.dimensions}}</p>
+                        </li>
+                        {% endif %}
+                        {% if inspo.creation_date %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <h5 class="mb-1">Creation Date</h5>
+                            <p>{{inspo.creation_date}}</p>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingThree">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseThree-{{inspo.id}}" aria-expanded="false" aria-controls="collapseThree">
+                    Notes
+                </button>
+            </h2>
+            <div id="collapseThree-{{inspo.id}}" class="accordion-collapse collapse" aria-labelledby="headingThree"
+                data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <div class="card mb-2">
+                        <div class="card-body note-{{inspo.id}}">
+                            {{inspo.notes}}
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-sm btn-outline-danger float-end" data-bs-toggle="modal"
+                                data-bs-target="#confirm-delete-modal-{{inspo.id}}"><i
+                                    class="fa-regular fa-trash-can"></i></button>
+                            <button class="btn btn-sm btn-outline-secondary float-end edit-button"
+                                data-bs-toggle="modal" data-bs-target="#edit-note-modal-{{inspo.id}}"
+                                data-inspo-id="{{inspo.id}}"><i class="fa-solid fa-pen-to-square"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- expand image modal -->
+
+    <div class="modal fade" id="expand-image-modal-{{inspo.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex justify-content-center">
+              <img src="{{inspo.image}}" alt="image for {{inspo.name}}" style="max-height: 85vh; min-height: 50vh; width: auto;">
+            </div>
+          </div>
+        </div>
+      </div>
 
     <!-- confirm delete modal -->
 
