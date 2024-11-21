@@ -20,13 +20,11 @@ def confirm_access(user_id):
     """confirm access for page--check for logged in user and check that logged in user id matches user id for page"""
 
     if not g.user:
-        flash('Please log in or register to use that feature!', 'info')
-        return False
+        return (False, ('Please log in or register to use that feature!', 'info'))
     if g.user.id != user_id:
-        flash('You are not authorized to view that page', 'danger')
-        return False
+        return (False, ('You are not authorized to view that page', 'danger'))
 
-    return True
+    return True, None
 
 # search results
 

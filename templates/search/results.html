@@ -55,17 +55,10 @@
                     {% if g.user %}
                     <input type="hidden" name="q" value="{{search_term}}">
                     <!-- open modal form to create inspo with result -->
-                    <button type="button" class="btn btn-outline-success" data-bs-toggle="modal"
-                        data-bs-target="#save-inspo-modal">
-                        Save
-                    </button>
+                    <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#save-inspo-modal">Save</button>
                     {% endif %}
-                    <button class="btn btn-outline-primary" type="submit">
-                        Try again
-                    </button>
-                    <a class="btn btn-outline-secondary" role="button" href="{{url_for('show_search_met')}}">
-                        Go back
-                    </a>
+                    <button class="btn btn-outline-primary" type="submit">Try again</button>
+                    <a class="btn btn-outline-secondary" role="button" href="{{url_for('show_search_met')}}">Go back</a>
                 </div>
             </form>
         </div>

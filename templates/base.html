@@ -48,8 +48,7 @@
                     </li>
                     {% else %}
                     <li class="nav-item">
-                        <small><span class="navbar-text">{{g.user.username}} (<a href="{{url_for('logout_user')}}">Log
-                                    Out</a>)</span></small>
+                        <small><span class="navbar-text">{{g.user.username}} (<a href="{{url_for('logout_user')}}">Log Out</a>)</span></small>
                     </li>
                     {% endif %}
                 </ul>

@@ -3,12 +3,13 @@ from unittest import TestCase
 
 from models import db, User, Inspo
 from flask import g
+from helpers import login
 
 os.environ['DATABASE_URL'] = "postgresql:///warbler-test"
 
 from app import app, CURR_USER_KEY
 
-with app.app_context:
+with app.app_context():
     db.create_all()
 
 app.config['WTF_CSRF_ENABLED'] = False
@@ -32,6 +33,10 @@ class UserManagementTestCase(TestCase):
             db.session.commit()
 
             self.client = app.test_client()
+
+    def tearDown(self):
+        with app.app_context():
+            db.session.rollback()
 
 
     def test_login(self):
@@ -76,7 +81,7 @@ class UserManagementTestCase(TestCase):
             html=resp.get_data(as_text=True)
 
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1 class="display-2">Register</h1>', html)
+            self.assertIn(' <h1 class="display-2 mb">Sign Up</h1>', html)
 
     def test_register_already_logged_in(self):
         """test for redirect, register page while already logged in"""
@@ -147,6 +152,10 @@ class InspoManagementTestCase(TestCase):
 
             self.client = app.test_client()
 
+    def tearDown(self):
+        with app.app_context():
+            db.session.rollback()
+
     def test_get_inspo_list_same_user(self):
         """test get inspo list for user who is logged in"""
 
@@ -189,20 +198,20 @@ class InspoManagementTestCase(TestCase):
 
         with self.client as c:
             with c.session_transaction() as s:
-                s[CURR_USER_KEY] = self.testuser.id
+                    s[CURR_USER_KEY] = self.testuser.id
 
             with app.app_context():
                 i=Inspo.make_inspo(user_id=self.testuser.id, notes="note")
                 db.session.add(i)
                 db.session.commit()
 
-            resp=c.post(f'/inspo/{i.id}/delete')
+                resp=c.post(f'/inspo/{i.id}/delete')
 
-            inspos=Inspo.query.all()
-            inspos_list=[inspo.id for inspo in inspos]
+                inspos=Inspo.query.all()
+                inspos_list=[inspo.id for inspo in inspos]
 
-        self.assertEqual(resp.status_code, 302)
-        self.assertNotIn(i.id, inspos_list)
+                self.assertEqual(resp.status_code, 302)
+                self.assertNotIn(i.id, inspos_list)
 
 class SearchRoutesTestCase(TestCase):
     """Test search routes"""
@@ -222,6 +231,10 @@ class SearchRoutesTestCase(TestCase):
 
             self.client = app.test_client()
 
+    def tearDown(self):
+        with app.app_context():
+            db.session.rollback()
+
     def test_show_search_met(self):
         """test show search page for MET api"""
 
@@ -236,15 +249,16 @@ class SearchRoutesTestCase(TestCase):
         """test search results page for user who is not logged in"""
 
         with self.client as c:
-            g.user=None
+            with app.app_context():
+                g.user=None
 
-            resp=c.get('/search/results', query_string={'q':'sunflower'})
-            html=resp.get_data(as_text=True)
+                resp=c.get('/search/results', query_string={'q':'sunflower'})
+                html=resp.get_data(as_text=True)
 
-            self.assertEqual(resp.status_code, 200)
-            self.assertIn('<button class="btn btn-outline-primary" type="submit">Try again</button>', html)
-            # will not have button to save result
-            self.assertNotIn('<button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#save-inspo-modal">Save</button>', html)
+                self.assertEqual(resp.status_code, 200)
+                self.assertIn('<button class="btn btn-outline-primary" type="submit">Try again</button>', html)
+                # will not have button to save result
+                self.assertNotIn('<button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#save-inspo-modal">Save</button>', html)
 
     def test_search_results_logged_in(self):
         """test search results page for logged in user"""
@@ -304,24 +318,25 @@ class OtherRoutesTestCase(TestCase):
         """test nav via homepage for logged out user"""
 
         with self.client as c:
-            g.user=None
+            with app.app_context():
+                g.user=None
 
-            resp=c.get('/')
-            html=resp.get_data(as_text=True)
+                resp=c.get('/')
+                html=resp.get_data(as_text=True)
 
-            self.assertEqual(resp.status_code, 200)
-            # login/register options
-            self.assertIn('Log In</a></small>', html)
-            self.assertIn('Register</a></small>', html)
-            # should not have saved inspo link
-            self.assertNotIn('My Inspo</a>', html)
+                self.assertEqual(resp.status_code, 200)
+                # login/register options
+                self.assertIn('Log In</a></small>', html)
+                self.assertIn('Register</a></small>', html)
+                # should not have saved inspo link
+                self.assertNotIn('My Inspo</a>', html)
 
     def test_nav_logged_in(self):
         """test nav via homepage for logged in user"""
 
         with self.client as c:
-            with c.session_transaction() as s:
-                s[CURR_USER_KEY] = self.testuser.id
+            with app.app_context():
+                g.user=self.testuser
 
             resp=c.get('/')
             html=resp.get_data(as_text=True)

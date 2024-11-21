@@ -130,7 +130,10 @@ def get_inspo_list(user_id):
 
     user = User.query.get_or_404(user_id)
  
-    if not confirm_access(user.id):
+    access, (msg, cat)=confirm_access(user.id)
+   
+    if access == False:
+        flash(msg, cat)
         return redirect('/')
 
     form = NoteForm()
@@ -174,7 +177,10 @@ def delete_inspo(inspo_id):
 
     inspo=Inspo.query.get_or_404(inspo_id)
 
-    if not confirm_access(inspo.user.id):
+    access, (msg, cat)=confirm_access(inspo.user.id)
+   
+    if access == False:
+        flash(msg, cat)
         return redirect('/')
 
     db.session.delete(inspo)
