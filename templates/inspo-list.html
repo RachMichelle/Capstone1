@@ -171,9 +171,10 @@
                     Are you sure you want to delete?
                 </div>
                 <div class="modal-footer">
+                    <form action="{{url_for('delete_inspo', inspo_id=inspo.id)}}" method="POST">
                     <a type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</a>
-                    <a type="button" class="btn btn-outline-danger"
-                        href="{{url_for('delete_inspo', inspo_id=inspo.id)}}">Delete</a>
+                    <button class="btn btn-outline-danger" type="submit">Delete</button>
+                    </form>
                 </div>
             </div>
         </div>

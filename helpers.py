@@ -3,7 +3,7 @@ import requests
 
 CURR_USER_KEY = "curr_user"
 
-# user route functions
+# user related functions
 
 def login(user):
     """add successfully authenticated user to session"""

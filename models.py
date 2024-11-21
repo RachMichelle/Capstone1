@@ -12,22 +12,6 @@ def connect_db(app):
     db.app = app
     db.init_app(app)
 
-# *****TO IMPLEMENT LATER*****
-# store museums and their endpoints in db and dynamically populate search pages. Allows exploration expansion. 
-
-# class Museum(db.Model):
-#     """table of museums available to explore"""
-
-#     __tablename__ = 'museums'
-
-#     id - db.Column(db.Integer, primary_key=True, autoincrement=True)
-
-#     name = db.Column(db.text, nullable=False, unique=True)
-
-#     location = db.Column(db.Text)
-
-#     seach_endpoint = db.Column(db.text, nullable=False)
-
 class User(db.Model):
     """User"""
 
@@ -49,6 +33,7 @@ class User(db.Model):
     def register_user(cls, username, email, password):
         """make username lowercased, hash pwd & create new User instance"""
 
+        # case-insensitive. All usernames to lowercase to prevent "user" and "User" from being considered different
         lowercased_username=username.lower()
 
         hash=bcrypt.generate_password_hash(password)
@@ -68,7 +53,7 @@ class User(db.Model):
             return False
         
 class Inspo(db.Model):
-    """saved pieces for users"""
+    """saved pieces for users, either with associated artwork or as stand-alone note"""
 
     __tablename__ = "inspos"
 
@@ -77,7 +62,7 @@ class Inspo(db.Model):
     # indicates stand alone note if False
     has_favorite = db.Column(db.Boolean, nullable=False)
     
-    # Optional: Users can save stand alone notes for ideas without being attached to saved favorite. For stand alone notes, content validated on form submit
+    # Optional: Some pieces do not have all info available. Users can save stand alone notes for ideas without being attached to saved favorite. For stand alone notes, content validated on form submit
     notes = db.Column(db.Text, nullable=True)
     
     image = db.Column(db.Text, nullable=True)
@@ -90,7 +75,7 @@ class Inspo(db.Model):
 
     dimensions = db.Column(db.Text, nullable=True)
 
-     # not all dates are exact, some give approximations (ex-"19th century") cannot use integer or date format to properly capture data provided
+    # not all dates are exact, some give approximations (ex-"19th century") cannot use integer or date format to properly capture data provided
     creation_date = db.Column(db.Text, nullable=True)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))

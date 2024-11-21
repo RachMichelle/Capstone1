@@ -33,10 +33,10 @@ class LoginForm(FlaskForm):
     password=PasswordField("Password", validators=
                            [InputRequired(message="Required")])
     
-    # Inspo Forms ************************************************************
+# Inspo Forms ************************************************************
 
 class InspoForm(FlaskForm):
-    """Add or Edit inspo -- Only notes can be input by user. All other info is pulledfrom Result object."""
+    """Add or Edit inspo (w/ saved favorite) -- Only notes can be input by user. All other info is pulled from Result object"""
 
     notes=TextAreaField("Notes", validators=
                         [Optional()])

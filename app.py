@@ -88,7 +88,7 @@ def register_user():
     form = RegisterForm()
 
     if form.validate_on_submit():
-        # check to see if email is already in system
+        # check to see if email already exists
         if User.query.filter_by(email=form.email.data.lower()).first():
             flash('There is already an account registered with that email', 'warning')
             return render_template('forms/register.html', form=form)
@@ -168,7 +168,7 @@ def get_inspo_list(user_id):
 
     return render_template('inspo-list.html', user=user, form=form)
 
-@app.route('/inspo/<int:inspo_id>/delete')
+@app.route('/inspo/<int:inspo_id>/delete', methods=['POST'])
 def delete_inspo(inspo_id):
     """delete favorite or note"""
 
