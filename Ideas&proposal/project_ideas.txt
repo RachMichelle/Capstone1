@@ -1,0 +1,7 @@
+In order of preference: 
+
+An artist’s inspiration app: Utilize the Met and/or Art Institute of Chicago API to produce search results (option for keyword or random) to find pieces within the collection. Users are able to save their favorites to their profile. Each entry under favorites will navigate towards a page with more information about the individual piece, and will have the option for users to add their own notes via form about what the piece inspires them to create. Those notes will then be saved to the piece’s information page. 
+
+Writer’s notepad app: With word cloud API, allow users to set up projects. Each will have a word cloud overview and associated notes–blurbs with ideas for plot, characters, world building, etc, structured like posts saved under each individual project. Posts will have category options–user will be able to filter posts to only view notes under the category selected. Users can access the overview of their project list and mark certain ideas as priority to be displayed first. 
+
+Weekly meal planning app: Using Edamam recipe API, will allow users to find and plan for meals for the week. Will have a user dashboard structured to show each day of the week with categories for Breakfast, Lunch, Dinner, and Snack, under which users can add their meal plans. Will also have link to weekly shopping list. Users will also have the option to add their own recipes, saved to their profile, as well as favorite recipes. 
