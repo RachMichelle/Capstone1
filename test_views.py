@@ -162,12 +162,15 @@ class InspoManagementTestCase(TestCase):
         with self.client as c:
             with c.session_transaction() as s:
                 s[CURR_USER_KEY] = self.testuser.id
+            
+            with app.app_context():
+                g.user = self.testuser
 
-            resp=c.get(f'/inspo/{self.testuser.id}')
-            html=resp.get_data(as_text=True)
+                resp=c.get(f'/inspo/{self.testuser.id}')
+                html=resp.get_data(as_text=True)
 
-            self.assertEqual(resp.status_code, 200)
-            self.assertIn('<button class="btn btn-outline-primary float-end" data-bs-toggle="modal" data-bs-target="#add-note-modal">Add A Note</button>', html)
+                self.assertEqual(resp.status_code, 200)
+                self.assertIn('<button class="btn btn-outline-primary float-end" data-bs-toggle="modal" data-bs-target="#add-note-modal">Add A Note</button>', html)
 
     def test_get_inspo_list_different_user(self):
         """test get inspo list for user not logged in, should redirect"""
@@ -175,10 +178,13 @@ class InspoManagementTestCase(TestCase):
         with self.client as c:
             with c.session_transaction() as s:
                 s[CURR_USER_KEY] = self.testuser.id
-            
-            resp=c.get(f'/inspo/{self.testuser2.id}')
 
-            self.assertEqual(resp.status_code, 302)
+            with app.app_context():
+                g.user = self.testuser
+            
+                resp=c.get(f'/inspo/{self.testuser2.id}')
+
+                self.assertEqual(resp.status_code, 302)
 
     def test_get_inspo_list_different_user_redirect(self):
         """test get inspo list for user not logged in, follow redirect"""
@@ -186,12 +192,15 @@ class InspoManagementTestCase(TestCase):
         with self.client as c:
             with c.session_transaction() as s:
                 s[CURR_USER_KEY] = self.testuser.id
-            
-            resp=c.get(f'/inspo/{self.testuser2.id}', follow_redirects=True)
-            html=resp.get_data(as_text=True)
+                
+            with app.app_context():
+                g.user = self.testuser
 
-            self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1 class="display-1">Explore</h1>', html)
+                resp=c.get(f'/inspo/{self.testuser2.id}', follow_redirects=True)
+                html=resp.get_data(as_text=True)
+
+                self.assertEqual(resp.status_code, 200)
+                self.assertIn('<h1 class="display-1">Explore</h1>', html)
 
     def test_delete_inspo(self):
         """test deleting a message"""
@@ -201,6 +210,8 @@ class InspoManagementTestCase(TestCase):
                     s[CURR_USER_KEY] = self.testuser.id
 
             with app.app_context():
+                g.user = self.testuser
+
                 i=Inspo.make_inspo(user_id=self.testuser.id, notes="note")
                 db.session.add(i)
                 db.session.commit()
@@ -336,15 +347,15 @@ class OtherRoutesTestCase(TestCase):
 
         with self.client as c:
             with app.app_context():
-                g.user=self.testuser
+                g.user = self.testuser
 
-            resp=c.get('/')
-            html=resp.get_data(as_text=True)
+                resp=c.get('/')
+                html=resp.get_data(as_text=True)
 
-            self.assertEqual(resp.status_code, 200)
-            # should have saved inspo link, log out option
-            self.assertIn('My Inspo</a>', html)
-            self.assertIn('Log Out</a>)</span></small>', html)
-            # no login/register options
-            self.assertNotIn('Log In</a></small>', html)
-            self.assertNotIn('Register</a></small>', html)
+                self.assertEqual(resp.status_code, 200)
+                # should have saved inspo link, log out option
+                self.assertIn('My Inspo</a>', html)
+                self.assertIn('Log Out</a>)</span></small>', html)
+                # no login/register options
+                self.assertNotIn('Log In</a></small>', html)
+                self.assertNotIn('Register</a></small>', html)

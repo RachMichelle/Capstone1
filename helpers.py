@@ -24,7 +24,7 @@ def confirm_access(user_id):
     if g.user.id != user_id:
         return (False, ('You are not authorized to view that page', 'danger'))
 
-    return True, None
+    return True, (None, None)
 
 # search results
 
