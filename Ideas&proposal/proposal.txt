@@ -1,0 +1,25 @@
+Description/Goal:
+Artist Inspiration Website–
+This will be designed to help users find pieces within the collection of a museum, using their API. Users will be able to save favorites to their profile, and each entry under favorites will navigate towards a page with more information about the individual piece. Users will have the option to add their own notes via form about what the piece inspires them to create, and those notes will be added to the expanded information page for that piece.
+
+Stack Focus: Primarily focused on back end with simple but clean front end UI. Will be using Python/Flask.
+
+Type: Website.
+
+Users: User demographic would be those with an interest in visual arts–this could be used by art students or established artists seeking inspiration. The search functionality will also be available without a profile for users to explore collections for enjoyment–profiles are only required to save favorites and notes. 
+
+Data: Will gather information about each piece via museum API. All will be done via server-side requests so favorited pieces can be easily saved to the database.
+
+Database Overview: 
+Users table: username, password (hashed with bcrypt) 
+Favorites table (foreign key-user ID)
+Notes table (foreign key-favorite ID)
+
+Basic Site Overview: 
+Home page–search or show random
+Results–API response from searched term or random selection
+To only be viewed by the logged in user: 
+User favorites–show saved favorites for logged-in user. 
+Favorite expanded info–show one favorite with associated notes for logged-in user. Options to add/edit notes or delete favorite.
+Add note–form to add note to favorite
+Edit note–form to edit note, or to delete the note. 
