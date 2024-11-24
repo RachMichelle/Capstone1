@@ -89,7 +89,8 @@ def register_user():
 
     if form.validate_on_submit():
         # check to see if email already exists
-        if User.query.filter_by(email=form.email.data.lower()).first():
+        user = User.email_exists(email=form.email.data.lower())
+        if user:
             flash('There is already an account registered with that email', 'warning')
             return render_template('forms/register.html', form=form)
         else:    
@@ -126,33 +127,38 @@ def logout_user():
 
 @app.route('/inspo/<int:user_id>', methods = ['GET', 'POST'])
 def get_inspo_list(user_id):
-    """get list of saved inspo for logged-in user. forms for add/edit stand alone notes"""
+    """get list of saved inspo for logged-in user.
+    modal forms for add/edit notes--submission to add and edit handled in same route"""
 
     user = User.query.get_or_404(user_id)
  
+    # confirm user is trying to view their own page
     access, (msg, cat)=confirm_access(user.id)
-   
+    
     if access == False:
         flash(msg, cat)
         return redirect('/')
 
+    # form for both adding and editing
     form = NoteForm()
 
-    # to edit note
+    # to edit note--confirm edit with hidden form field containing id for inspo
+    # note pre-populated with js
     if request.form.get('inspo_id'):
         
-        id=request.form.get('inspo_id')
-        note = Inspo.query.get_or_404(id)
+        id = request.form.get('inspo_id')
+        inspo = Inspo.query.get_or_404(id)
+        updated_note = form.notes.data
         
         if form.validate_on_submit():
-            note.notes=form.notes.data
+            inspo.update_note(updated_note)
 
             db.session.commit()
              
             flash('Updated!', 'success')
             return redirect(url_for('get_inspo_list', user_id=user.id))
 
-    # to add new note
+    # to add new stand alone note
     else: 
     
         if form.validate_on_submit():

@@ -5,14 +5,14 @@ from models import db, User, Inspo
 from flask import g
 from helpers import login
 
-os.environ['DATABASE_URL'] = "postgresql:///warbler-test"
+os.environ['DATABASE_URL'] = "postgresql:///inspireme_test"
 
 from app import app, CURR_USER_KEY
 
 with app.app_context():
     db.create_all()
 
-app.config['WTF_CSRF_ENABLED'] = False
+app.config['TESTING'] = True
 app.config['DEBUG_TB_HOSTS'] = ['dont-show-debug-toolbar']
 app.config['WTF_CSRF_ENABLED'] = False
 

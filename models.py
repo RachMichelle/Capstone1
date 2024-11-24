@@ -52,6 +52,17 @@ class User(db.Model):
         else:
             return False
         
+    @classmethod
+    def email_exists(cls, email):
+        """check to see if email used at registration is already associated with an account in db. returns associataed user or False"""
+
+        user = User.query.filter_by(email=email).first()
+
+        if user: 
+            return user
+        else:
+            return False
+        
 class Inspo(db.Model):
     """saved pieces for users, either with associated artwork or as stand-alone note"""
 
@@ -87,3 +98,8 @@ class Inspo(db.Model):
         """create new inspo instance, default None for all art info and has_favorite in case of stand alone note"""
 
         return cls(notes=notes, user_id=user_id, has_favorite=has_favorite, image=image, name=name, artist=artist, medium=medium, dimensions=dimensions, creation_date=creation_date)
+    
+    def update_note(self, updated_note):
+        """updates user notes on inspo"""
+
+        self.notes=updated_note
